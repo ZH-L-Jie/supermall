@@ -4,16 +4,25 @@
         <nav-bar class="home-nav">
             <div slot="center">购物街</div>
         </nav-bar>
-
+        <TabControl class="tab-control"
+                    ref="tabControl1"
+                    :titles="['流行','新款','精选']"
+                    @tabClick="tabClick"
+                    v-show="isTabFixed"
+        />
         <scroll class="content" ref="scroll"
                 :probe-type="3"
                 :pullUpLoad="true"
                 @scroll="contentScroll"
                 @pullingUp="loadMore">
-            <HomeSwiper :banners="banners"/>
+            <HomeSwiper :banners="banners" @swiperImageLoad="swiperImageLoad"/>
             <RecommendView :recommends="recommends"></RecommendView>
             <FeatureView></FeatureView>
-            <TabControl :titles="['流行','新款','精选']" @tabClick="tabClick"/>
+            <TabControl class="tab-control"
+                        ref="tabControl2"
+                        :titles="['流行','新款','精选']"
+                        @tabClick="tabClick"
+            />
             <GoodsList :goods="showGoods"></GoodsList>
 
         </scroll>
@@ -41,6 +50,9 @@
 
     import {getHomeMultidata, getHomeGoods} from "network/home";
 
+    // 工具组件
+    import {debounce} from 'common/utils'
+
     export default {
         name: "home",
         data() {
@@ -53,7 +65,9 @@
                     sell: {page: 0, list: []}
                 },
                 currentType: 'pop',
-                isShowBackTop: false
+                isShowBackTop: false,
+                tabOffsetTop: 0,
+                isTabFixed: false,
             };
         },
         computed: {
@@ -76,10 +90,21 @@
         },
         created() {
             //视图创建立马发送请求
+            // 1.请求多个数据
             this.getHomeMultidata()
+            // 2.请求商品数据
             this.getHomeGoods('pop')
             this.getHomeGoods('new')
             this.getHomeGoods('sell')
+
+        },
+        mounted() {
+            // 3.监听item中的图片加载完成
+            const refresh = debounce(this.$refs.scroll.refresh, 50)
+            this.$bus.$on('itemImageLoad', () => {
+                refresh()
+
+            })
         },
         methods: {
             /**
@@ -97,12 +122,19 @@
                         this.currentType = 'sell';
                         break;
                 }
+                this.$refs.tabControl1.currentIndex=index
+                this.$refs.tabControl2.currentIndex=index
             },
             backClick() {
                 this.$refs.scroll.scrollTo(0, 0, 300);
             },
             contentScroll(position) {
                 this.isShowBackTop = (-position.y) > 1000
+                if (this.isShowBackTop = Math.abs(position.y) > this.tabOffsetTop) {
+                    this.isTabFixed = true;
+                } else {
+                    this.isTabFixed = false;
+                }
             },
             loadMore() {
                 this.getHomeGoods(this.currentType)
@@ -127,8 +159,16 @@
                     this.$refs.scroll.finishPullUp()
 
                 });
+            },
+            swiperImageLoad() {
+                console.log(this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop);
+
             }
+        },
+        destroyed() {
+            console.log('pohuaile');
         }
+
     };
 </script>
 
