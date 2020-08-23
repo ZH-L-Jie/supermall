@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import toast from 'components/common/toast'
-import FastClick from 'fast click'
+import FastClick from 'fastclick'
 
 Vue.config.productionTip = false
 // 添加事件总线
