@@ -36,7 +36,7 @@
 
             })
             // 2.监听滚动的位置
-            if (this.probeType === 2|| this.probeType ===3){
+            if (this.probeType === 2 || this.probeType === 3) {
                 this.scroll.on('scroll', (position) => {
                     //
                     this.$emit('scroll', position)
@@ -62,9 +62,12 @@
                 this.scroll && this.scroll.finishPullUp()
             },
             refresh() {
-                console.log('---');
+                console.log('图片刷新次数');
                 this.scroll && this.scroll.refresh();
             },
+            getScrollY() {
+                return this.scroll ? this.scroll.y : 0
+            }
         }
     }
 </script>

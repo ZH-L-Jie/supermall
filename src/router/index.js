@@ -1,32 +1,36 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-const Home =()=>import ('views/home/Home.vue')
-const Cart =()=>import ('views/cart/Cart.vue')
-const Profile =()=>import ('views/profile/Profile.vue')
-const Category =()=>import ('views/categories/Categories.vue')
+const Home = () => import ('views/home/Home')
+const Cart = () => import ('views/cart/Cart')
+const Profile = () => import ('views/profile/Profile')
+const Category = () => import ('views/categories/Categories')
+const Detail = () => import ('views/detail/Detail')
 
 //1.安装插件
 Vue.use(VueRouter)
 
-const routes =[{
+const routes = [{
     path: '',
     redirect: '/home'
 }, {
     path: '/home',
     component: Home
 },
- {
-    path: '/cart',
-    component: Cart
-},
- {
-    path: '/category',
-    component: Category
-}, {
-    path: '/profile',
-    component: Profile
-}
+    {
+        path: '/cart',
+        component: Cart
+    },
+    {
+        path: '/category',
+        component: Category
+    }, {
+        path: '/profile',
+        component: Profile
+    }, {
+        path: '/detail/:iid',
+        component: Detail
+    }
 
 ]
 

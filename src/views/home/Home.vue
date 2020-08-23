@@ -68,6 +68,7 @@
                 isShowBackTop: false,
                 tabOffsetTop: 0,
                 isTabFixed: false,
+                saveY: 0,
             };
         },
         computed: {
@@ -122,8 +123,8 @@
                         this.currentType = 'sell';
                         break;
                 }
-                this.$refs.tabControl1.currentIndex=index
-                this.$refs.tabControl2.currentIndex=index
+                this.$refs.tabControl1.currentIndex = index
+                this.$refs.tabControl2.currentIndex = index
             },
             backClick() {
                 this.$refs.scroll.scrollTo(0, 0, 300);
@@ -161,12 +162,23 @@
                 });
             },
             swiperImageLoad() {
-                console.log(this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop);
+                this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
 
             }
         },
         destroyed() {
-            console.log('pohuaile');
+            // console.log('destroyed');
+        },
+        activated() {
+            // console.log("activated");
+            this.$refs.scroll.refresh()
+            this.$refs.scroll.scrollTo(0,this.saveY,0)
+        },
+        deactivated() {
+            this.saveY = this.$refs.scroll.getScrollY()
+            // console.log('deactivated');
+            //取消全局监听
+            this.$bus.$off("itemImgLoad",this.itemImgListener)
         }
 
     };
