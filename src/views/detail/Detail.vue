@@ -14,7 +14,7 @@
         </scroll>
         <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
         <detail-bottom-bar @addToCart="addToCart"></detail-bottom-bar>
-
+<!--        <toast :message="message" :show="show"/>-->
     </div>
 </template>
 
@@ -36,11 +36,14 @@
     } from '../../common/mixin'
     import DetailBottomBar from "./childComps/DetailBottomBar";
     import BackTop from "../../components/content/backTop/BackTop";
+    import {mapActions} from 'vuex'
+    // import Toast from "../../components/common/toast/Toast";
 
     export default {
         name: "Detail",
         mixins: [itemListenerMixin],
         components: {
+            // Toast,
             BackTop,
             DetailBottomBar,
             GoodsList,
@@ -62,6 +65,8 @@
                 getThemeTopY: null,
                 currentIndex: 0,
                 isShowBackTop: false,
+                // message:'',
+                // show:false,
 
             }
         },
@@ -103,6 +108,7 @@
             })
         },
         methods: {
+            ...mapActions(['addCart']),
             detailImageLoad() {
                 this.newRefresh()
                 this.getThemeTopY()
@@ -144,9 +150,20 @@
                 product.title = this.goods.title;
                 product.desc = this.goods.desc;
                 product.newprice = this.goods.nowPrice;
-
-                // this.$store.commit('addCart', product)
-                this.$store.dispatch('addCart',product)
+                // mapperActions映射导入
+                this.addCart(product).then(res => {
+                    // this.show=true
+                    // this.message=res
+                    // setTimeout(()=>{
+                    //     this.show=false
+                    //     this.message=''
+                    // },1500)
+                    // console.log(res);
+                    this.$toast.show(res)
+                })
+                // this.$store.dispatch('addCart',product).then(res =>{
+                //     console.log(res);
+                // })
                 console.log("购物车")
 
             }
